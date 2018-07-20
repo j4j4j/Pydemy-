@@ -12,9 +12,9 @@ class Card:
     '''
     suit = ''
     rank = ''
-    def __init__(self):
-        self.suit = suits[0]
-        self.rank = ranks[2]
+    def __init__(self,rank='Two',suit='Hearts'):
+        self.suit = suit
+        self.rank = rank
         
     def __str__(self):
         return '{} of {}'.format(self.rank, self.suit)
@@ -47,15 +47,9 @@ class Deck:
     str returns current list of cards
     '''
     
-    '''needs: 
-        1) .draw()
-        2) 
-    '''
-    
     cards = []
     def __init__(self):
         self.cards = [Card() for i in range(52)]
-        print('New deck made.\n')
         pointer = 0
         for x in range(len(suits)):
             for y in range(2,len(ranks)):
@@ -64,10 +58,12 @@ class Deck:
                 pointer+=1
     
     def draw(self):
-        print('{} cards in the deck. drawing a card:\n'.format(len(self.cards)))
+        #diagnostic print, omitted.
+        #print('{} cards in the deck. drawing a card:'.format(len(self.cards)))
         drawn_number = random.randint(0,len(self.cards))
-        print('drawn number: {}'.format(str(drawn_number)))
-        return self.cards.pop(drawn_number)
+        #diagnostic print, omitted.
+        #print('drawn number: {}'.format(str(drawn_number)))
+        return self.cards.pop(drawn_number-1)
     
     def shuffle(self):
         random.shuffle(self.cards)
@@ -94,11 +90,14 @@ class Hand:
         self.cards.append(card)
     
     def count(self):
+        '''
+        return the value total for the hand. check if player busts, if so, turn aces into 1's. 
+        '''
         total = 0
         aces = 0
         for x in range(len(self.cards)):
-            total = total + self.cards[x][0]
-            if self.cards[x][0] == 11:
+            total = total + self.cards[x].getValue()
+            if self.cards[x].getValue() == 11:
                 aces+=1
         while total > 21 and aces > 0:
             total = total - 10
@@ -114,9 +113,11 @@ class Player(Hand):
     def getFunds(self):
         return self.funds
     def __str__(self):
-        output = 'current hand for: {} \nFunds: {}\n'.format(self.name,self.funds)
+        output = '{}\'s hand\n'.format(self.name)
         for x in range(len(self.cards)):
             output = output+str(x+1)+'. '+self.cards[x].get()+'\n'
+        output = output + f'Total: {self.count()}'
         return output 
 
 
+    
